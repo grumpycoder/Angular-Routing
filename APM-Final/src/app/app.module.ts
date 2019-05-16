@@ -19,7 +19,7 @@ import { MessageModule } from './messages/message.module';
 @NgModule({
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
+     ,
     HttpClientModule,
     InMemoryWebApiModule.forRoot(ProductData, { delay: 1000 }),
     UserModule,
