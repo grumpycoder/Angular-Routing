@@ -45,7 +45,9 @@
               />
             </td>
             <td>
-              <a [routerLink]="['/products/', product.id]" routerLinkActive="router-link-active">
+              <a [routerLink]="['/products/', product.id]"
+              [queryParams]="{filterBy: listFilter, showImage: showImage}"
+              routerLinkActive="router-link-active">
                 {{ product.productName }}
               </a>
             </td>
