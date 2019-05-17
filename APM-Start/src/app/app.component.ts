@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { Router, Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel } from '@angular/router';
 
 import { AuthService } from './user/auth.service';
-import { Router, Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel } from '@angular/router';
 import { slideInAnimation } from './app.animation';
+import { MessageService } from './messages/message.service';
 
 @Component({
   selector: 'pm-root',
@@ -11,12 +12,15 @@ import { slideInAnimation } from './app.animation';
   animations: [slideInAnimation]
 })
 export class AppComponent {
-
   pageTitle = 'Acme Product Management';
   loading = true;
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn;
+  }
+
+  get isMessageDisplayed(): boolean {
+    return this.messageService.isDisplayed;
   }
 
   get userName(): string {
@@ -26,15 +30,15 @@ export class AppComponent {
     return '';
   }
 
-  constructor(private authService: AuthService, private router: Router) {
-
+  constructor(private authService: AuthService,
+    private router: Router,
+    private messageService: MessageService) {
     router.events.subscribe((routerEvent: Event) => {
       this.checkRouterEvent(routerEvent);
     });
-
   }
 
-  checkRouterEvent(routerEvent: Event) {
+  checkRouterEvent(routerEvent: Event): void {
     if (routerEvent instanceof NavigationStart) {
       this.loading = true;
     }
@@ -44,13 +48,23 @@ export class AppComponent {
       routerEvent instanceof NavigationError) {
       this.loading = false;
     }
-
   }
 
+  displayMessages(): void {
+    // Example of primary and secondary routing together
+    // this.router.navigate(['/login', {outlets: { popup: ['messages']}}]); // Does not work
+    // this.router.navigate([{outlets: { primary: ['login'], popup: ['messages']}}]); // Works
+    this.router.navigate([{ outlets: { popup: ['messages'] } }]); // Works
+    this.messageService.isDisplayed = true;
+  }
+
+  hideMessages(): void {
+    this.router.navigate([{ outlets: { popup: null } }]);
+    this.messageService.isDisplayed = false;
+  }
 
   logOut(): void {
     this.authService.logout();
-    console.log('Log out');
     this.router.navigateByUrl('/welcome');
   }
 }
